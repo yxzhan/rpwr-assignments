@@ -30,4 +30,11 @@ RUN catkin build
 WORKDIR ${PYCRAM_WS}/src/pycram
 COPY --chown=${NB_USER}:users . rpwr-assignments/
 
-
+USER root
+RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+RUN wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+RUN apt-get update
+RUN apt-get install -y \
+    ignition-citadel \
+    ros-noetic-ros-ign
+USER ${NB_USER}
