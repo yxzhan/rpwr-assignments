@@ -1,6 +1,5 @@
 FROM intel4coro/base-notebook:20.04-noetic-vnc
 
-ENV PATH=$PATH:/home/user/${NB_USER}/bin
 ENV TURTLEBOT3_MODEL=waffle_pi
 
 USER root
@@ -16,12 +15,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
-RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-RUN wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-RUN apt-get update
-RUN apt-get install -y \
-    ignition-citadel \
-    ros-noetic-ros-ign
+# RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+# RUN wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+# RUN apt-get update
+# RUN apt-get install -y \
+#     ignition-citadel \
+#     ros-noetic-ros-ign
 
 USER ${NB_USER}
 WORKDIR ${ROS_WS}/src/
@@ -32,9 +31,11 @@ USER root
 RUN rosdep update && rosdep install --from-paths . --ignore-src -r -y
 
 USER ${NB_USER}
-WORKDIR  ${ROS_WS}
+WORKDIR ${ROS_WS}
 RUN catkin build
 
 COPY --chown=${NB_USER}:users . /home/${NB_USER}/rpwr-assignments/
 WORKDIR /home/${NB_USER}/rpwr-assignments
 RUN ln -s $ROS_WS $PWD/ROS_WS
+
+COPY --chown=${NB_USER}:users 06_navigation/rviz-turtles.rviz ${ROS_WS}/src/turtlebot3_simulations/turtlebot3_gazebo/rviz

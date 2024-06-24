@@ -1,17 +1,18 @@
 version: '3'
 services:
-  pycram:
-    image: intel4coro/artnie-2drpwr-2dassignments-a6f480:24885d1d20a2dc7df20203b27e4770ee22c29095
+  rpwr-assignments:
+    image: intel4coro/artnie-2drpwr-2dassignments-a6f480:latest
     build:
       context: .
       dockerfile: ./Dockerfile
     stdin_open: true
     tty: true
-    ports: 
+    ports:
       - 8888:8888
     privileged: true
+    command: jupyter lab --NotebookApp.token=''
     volumes:
-      - ./:/home/jovyan/work
+      - ./:/home/jovyan/rpwr-assignments
 
     # for windows and mac, use 'network_mode: bridge'
     # network_mode: host
